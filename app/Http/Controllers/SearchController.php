@@ -13,8 +13,16 @@ class SearchController extends Controller
 
     public function search(Request $request){
         $professional = null;
-        if(!empty($request->inscricao)){
-            $professional = CorenInscrito::where('inscricao', $request->inscricao)->get();
+        if(!empty($request->cpf)){
+            $request->validate([
+                'cpf' => 'required|cpf',
+            ]);
+            $cpf = preg_replace("/\D+/", "", $request->input('cpf')); // remove qualquer caracter não numérico
+            $professional = CorenInscrito::where([['cpf', $cpf], ['inscricao', 'LIKE', '%-ENF']])->get();
+            if($professional->isEmpty()){
+                $notification = "Este evento é restrito apenas para enfermeiros!";
+                return view('search', compact('notification'));
+            }
         }
         return view('search', compact('professional'));
     }
