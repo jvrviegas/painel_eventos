@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 Route::get('/subscriptions', 'EventSubscriptionController@index');
 
-Route::get('/test', 'EventSubscriptionController@index')->name('test');
+Route::get('/test/{id}', 'SearchController@subscript')->name('test');
 
 /* AUTOCOMPLETE ROUTES */
 Route::get('search', 'SearchController@index')->name('search');

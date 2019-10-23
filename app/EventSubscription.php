@@ -12,10 +12,10 @@ class EventSubscription extends Model
     ];
 
     public function professional(){
-        return $this->belongsTo('App\CorenInscrito');
+        return $this->belongsTo(CorenInscrito::class);
     }
 
     public function event(){
-        return $this->belongsTo('App\Event');
+        return $this->belongsTo(Event::class);
     }
 }

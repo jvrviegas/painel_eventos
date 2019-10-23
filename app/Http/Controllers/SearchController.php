@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\CorenInscrito;
+use App\Event;
+use App\EventSubscription;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
@@ -25,6 +27,28 @@ class SearchController extends Controller
             }
         }
         return view('search', compact('professional'));
+    }
+
+    public function subscript($id){
+        $event = Event::findOrFail($id);
+        $professional = CorenInscrito::where('inscricao', '=', '382904-ENF')->first();
+        $subscription = $event->subscriptions()->where('professional_id', '=', $professional->id)->first();
+        $vagas = $event->subscriptions()->count();
+
+        return view('test', compact('event', 'subscription', 'vagas'));
+        /* $totalSubscriptions = EventSubscription::where('event_id', '=', $id)->all();
+        if($event->vagas <= $totalSubscriptions){
+            $subscription = new EventSubscription();
+            $subscription->event_id = $request->input('event_id');
+            $subscription->professional = $professional->id;
+            $save = $subscription->save();
+            if($save){
+                return response()->json('Inscrição realizada com sucesso!');
+            }
+        }
+        else{
+
+        } */
     }
 
     public function autocomplete(Request $request){

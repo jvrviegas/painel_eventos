@@ -12,6 +12,6 @@ class Event extends Model
     ];
 
     public function subscriptions(){
-        return $this->hasMany('App\EventSubscription');
+        return $this->hasMany(EventSubscription::class);
     }
 }
