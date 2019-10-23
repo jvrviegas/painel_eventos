@@ -25,7 +25,7 @@ class CreateEventSubscriptionTable extends Migration
                 ->onDelete('cascade');
             $table->integer('professional_id')->unsigned();
             $table->foreign('professional_id')
-                ->references('id')->on('inscritos_coren')
+                ->references('id')->on('coren_inscritos')
                 ->onDelete('cascade');
 
             $table->timestamps();
