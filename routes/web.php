@@ -17,12 +17,12 @@ Route::get('/', function () {
 
 Route::get('/subscriptions', 'EventSubscriptionController@index');
 
-Route::get('/test/{id}', 'SearchController@subscript')->name('test');
+Route::post('/subscript/{id}', 'SearchController@subscript')->name('subscript');
 
 /* AUTOCOMPLETE ROUTES */
 Route::get('search', 'SearchController@index')->name('search');
-Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete');
 Route::post('search', 'SearchController@search');
+/* Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete'); */
 
 Route::group(['prefix' => 'admin'], function(){
     Voyager::routes();

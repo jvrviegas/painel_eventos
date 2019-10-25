@@ -24,12 +24,55 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
 
     <script>
-        $(document).ready(function(){
+        jQuery(document).ready(function ($) {
             $('.cpf').mask('000.000.000-00', {reverse: false});
 
-            $("#subscript").click(function(){
-                $data = $(this).closest('form').serialize();
-                console.log($data);
+            $(".search").click(function(e){
+                e.preventDefault();
+                var data = $(this).closest('form').serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: "{{url('/search')}}",
+                    data: data,
+                    dataType: 'JSON',
+                    success: function (results) {
+                        if (results.success === true) {
+                            $("#professional-data").html('<label for="inscricao">Inscrição</label>'+
+                            '<input type="text" class="form-control mb-4" name="inscricao" value="'+results.professional.inscricao+'" readonly>'+
+                            '<label for="nome">Nome completo:</label>'+
+                            '<input type="text" class="form-control mb-4" name="nome" value="'+results.professional.nome+'" readonly>'+
+                            '<label for="cpf">CPF:</label>'+
+                            '<input type="text" class="form-control mb-4" name="cpf" value="'+results.professional.cpf+'" readonly>'+
+                            '<button id="subscript" class="btn btn-info btn-block my-4">Inscrever</button>');
+                        } else {
+                            swal("Opa!", results.message, "warning");
+                        }
+                    },
+                    error: function (reject) {
+                        if( reject.status === 422 ) {
+                            var errors = $.parseJSON(reject.responseText);
+                            swal(errors.errors.cpf[0], '', "error");
+                        }
+                    }
+                });
+            });
+
+            $(document).on("click", "#subscript", function (e) {
+                e.preventDefault();
+                var data = $(this).closest('form').serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: "{{url('/subscript/1')}}",
+                    data: data,
+                    dataType: 'JSON',
+                    success: function (results) {
+                        if (results.success === true) {
+                            swal("Ok!", results.message, "success");
+                        } else {
+                            swal("Opa!", results.message, "warning");
+                        }
+                    }
+                });
             });
         });
     </script>
@@ -38,43 +81,16 @@
 
 <div class="container">
     <div class="form-group">
-        <form if="subscript-form" action="{{url('search')}}" class="border border-light p-5" method="POST">
+        <form id="search-form" action="" class="border border-light p-5">
             @csrf
             <label class="" for="cpf">Insira seu CPF abaixo:</label>
             <input type="text" value="@if($professional ?? '' != null) {{old('cpf', $professional[0]->cpf)}} @endif" name="cpf" class="cpf form-control mb-4" placeholder="CPF: 123.456.789-00" required>
-            <button id="search" class="btn btn-info btn-block my-4" type="submit">Buscar inscrição</button>
-            <hr>
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-            @if($notification ?? '' != null)
-                <script>
-                    swal({
-                        title: "Opa!",
-                        html: '{{$notification}} Para mais informações entre em contato no número: <a href="tel:31944223">3194-4223</a>',
-                        type: 'warning'
-                    });
-                </script>
-            @endif
-            @if($professional ?? '' != null)
-                @if(!$professional->isEmpty())
-                    <label for="inscricao">Inscrição</label>
-                    <input type="text" class="form-control mb-4" name="inscricao" value="{{$professional[0]->inscricao}}" readonly>
-                    <label for="nome">Nome completo:</label>
-                    <input type="text" class="form-control mb-4" name="nome" value="{{$professional[0]->nome}}" readonly>
-                    <label for="cpf">CPF:</label>
-                    <input type="text" class="form-control mb-4" name="cpf" value="{{$professional[0]->cpf}}" readonly>
-                    <button id="subscript" class="btn btn-info btn-block my-4">Inscrever</button>
-                @else
-                    <p>Inscrição inválida!</p>
-                @endif
-            @endif
+            <button id="search" class="search btn btn-info btn-block my-4">Buscar inscrição</button>
+        </form>
+        <form id="subscript-form" class="border border-light p-5">
+            @csrf
+            <div id="professional-data" class="form-group">
+            </div>
         </form>
     </div>
 </div>

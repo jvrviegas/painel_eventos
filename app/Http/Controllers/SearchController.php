@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\CorenInscrito;
 use App\Event;
 use App\EventSubscription;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
@@ -19,36 +20,68 @@ class SearchController extends Controller
             $request->validate([
                 'cpf' => 'required|cpf',
             ]);
-            $cpf = preg_replace("/\D+/", "", $request->input('cpf')); // remove qualquer caracter não numérico
-            $professional = CorenInscrito::where([['cpf', $cpf], ['inscricao', 'LIKE', '%-ENF']])->get();
-            if($professional->isEmpty()){
-                $notification = "Este evento é restrito apenas para enfermeiros!";
-                return view('search', compact('notification'));
+            $cpf = preg_replace("/\D+/", "", $request->input('cpf')); // remove qualquer caractere não numérico
+            $professional = CorenInscrito::where([['cpf', $cpf], ['inscricao', 'LIKE', '%-ENF']])->first();
+            if(!$professional){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Este evento é restrito para enfermeiros!'
+                ]);
             }
         }
-        return view('search', compact('professional'));
+        return response()->json([
+            'success' => true,
+            'professional' => $professional
+        ]);
     }
 
-    public function subscript($id){
+    public function subscript(Request $request, $id){
         $event = Event::findOrFail($id);
-        $professional = CorenInscrito::where('inscricao', '=', '382904-ENF')->first();
+        $professional = CorenInscrito::where('inscricao', '=', $request->input('inscricao'))->first();
         $subscription = $event->subscriptions()->where('professional_id', '=', $professional->id)->first();
-        $vagas = $event->subscriptions()->count();
+        $vagas_preenchidas = $event->subscriptions()->count();
+        $remaining_vacancies = $event->vacancies - $vagas_preenchidas;
+        $now = date('Y-m-d');
 
-        return view('test', compact('event', 'subscription', 'vagas'));
-        /* $totalSubscriptions = EventSubscription::where('event_id', '=', $id)->all();
-        if($event->vagas <= $totalSubscriptions){
-            $subscription = new EventSubscription();
-            $subscription->event_id = $request->input('event_id');
-            $subscription->professional = $professional->id;
-            $save = $subscription->save();
-            if($save){
-                return response()->json('Inscrição realizada com sucesso!');
+        // Posteriormente adicionar a verificação da restrição do evento pra este método
+        if($now >= $event->start_date && $now <= $event->end_date){
+            if($subscription){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Você já realizou sua inscrição!'
+                ]);
+            }
+            else if($remaining_vacancies > 0){
+                $event_subscription = new EventSubscription();
+                $event_subscription->event_id = $event->id;
+                $event_subscription->professional_id = $professional->id;
+                $save = $event_subscription->save();
+                if($save){
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Inscrição realizada com sucesso!'
+                    ]);
+                }
+                else{
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Falha ao realizar sua inscrição, por favor tente novamente!'
+                    ]);
+                }
+            }
+            else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Inscrições esgotadas!'
+                ]);
             }
         }
         else{
-
-        } */
+            return response()->json([
+                'success' => false,
+                'message' => 'Inscrições encerradas'
+            ]);
+        }
     }
 
     public function autocomplete(Request $request){

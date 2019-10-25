@@ -1,5 +1,5 @@
 <div>
-<p>{{$event}}</p>
-<p>{{$subscription[0]}}</p>
-<p>Vagas disponíveis: {{$event->vacancies - $vagas}}</p>
+<p>{{$now}}</p>
+<p>{{$start_date}}</p>
+<p>{{$end_date}}</p>
 </div>
