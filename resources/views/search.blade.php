@@ -22,8 +22,6 @@
     <!-- SweetAlert 2 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
-    <!-- JQuery BlockUI Plugin -->
-    <script src="http://malsup.github.io/jquery.blockUI.js"></script>
 
     <style>
             /* Start by setting display:none to make this hidden.
