@@ -9,6 +9,7 @@
     <div class="container-fluid">
         <h1 class="page-title">
             <i class="{{ $dataType->icon }}"></i> {{ $dataType->getTranslatedAttribute('display_name_plural') }}
+            <a type="button" href="{{url('/admin/events/'.$_GET['id'].'/presence_list')}}" class="btn btn-sm btn-success pull-right">Imprimir Lista de Presença</a>
         </h1>
         @php $showCheckboxColumn = false @endphp
         @can('edit', app($dataType->model_name))
