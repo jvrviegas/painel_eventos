@@ -22,20 +22,57 @@
     <!-- SweetAlert 2 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
+    <!-- JQuery BlockUI Plugin -->
+    <script src="http://malsup.github.io/jquery.blockUI.js"></script>
 
+    <style>
+            /* Start by setting display:none to make this hidden.
+            Then we position it in relation to the viewport window
+            with position:fixed. Width, height, top and left speak
+            for themselves. Background we set to 80% white with
+            our animation centered, and no-repeating */
+            .modal {
+                display:    none;
+                position:   fixed;
+                z-index:    1000;
+                top:        0;
+                left:       0;
+                height:     100%;
+                width:      100%;
+                background: rgba( 255, 255, 255, .8 )
+                            url('{{asset("ajax-loader.gif")}}')
+                            50% 50%
+                            no-repeat;
+            }
+
+            /* When the body has the loading class, we turn
+            the scrollbar off with overflow:hidden */
+            body.loading .modal {
+                overflow: hidden;
+            }
+
+            /* Anytime the body has the loading class, our
+            modal element will be visible */
+            body.loading .modal {
+                display: block;
+            }
+    </style>
     <script>
         jQuery(document).ready(function ($) {
             $('.cpf').mask('000.000.000-00', {reverse: false});
 
+
             $(".search").click(function(e){
                 e.preventDefault();
                 var data = $(this).closest('form').serialize();
+                $('body').addClass("loading");
                 $.ajax({
                     type: 'POST',
                     url: "{{url('/search')}}",
                     data: data,
                     dataType: 'JSON',
                     success: function (results) {
+                        $('body').removeClass("loading");
                         if (results.success === true) {
                             $("#professional-data").html('<label for="inscricao">Inscrição</label>'+
                             '<input type="text" class="form-control mb-4" name="inscricao" value="'+results.professional.inscricao+'" readonly>'+
@@ -94,5 +131,6 @@
         </form>
     </div>
 </div>
+<div class="modal"><!-- Place at bottom of page --></div>
 </body>
 </html>
