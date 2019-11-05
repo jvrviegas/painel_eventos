@@ -44,7 +44,7 @@ class SearchController extends Controller
         $now = date('Y-m-d');
 
         // Posteriormente adicionar a verificação da restrição do evento pra este método
-        if($now >= $event->start_date && $now <= $event->end_date){
+        if($now >= $event->subscription_start && $now <= $event->subscription_end){
             if($subscription){
                 return response()->json([
                     'success' => false,

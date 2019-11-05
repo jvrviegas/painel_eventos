@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEventSubscriptionTable extends Migration
+class CreateEventSubscriptionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateEventSubscriptionTable extends Migration
      */
     public function up()
     {
-        Schema::create('event_subscription', function (Blueprint $table) {
+        Schema::create('event_subscriptions', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('subscripiton_key');
-            $table->string('payment_situation');
-            $table->tinyInteger('presence');
+            $table->string('subscripiton_key')->nullable();
+            $table->tinyInteger('payment_situation')->nullable();
+            $table->tinyInteger('presence')->default(0);
 
             $table->integer('event_id')->unsigned();
             $table->foreign('event_id')
@@ -39,6 +39,6 @@ class CreateEventSubscriptionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('event_subscription');
+        Schema::dropIfExists('event_subscriptions');
     }
 }

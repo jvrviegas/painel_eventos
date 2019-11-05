@@ -17,7 +17,7 @@ class CreateCorenInscritosTable extends Migration
             $table->increments('id');
             $table->string('registry');
             $table->string('name');
-            $table->integer('cpf');
+            $table->string('cpf');
             $table->string('situation');
             $table->timestamps();
         });

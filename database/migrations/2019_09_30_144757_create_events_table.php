@@ -20,16 +20,17 @@ class CreateEventsTable extends Migration
             $table->string('subject');
             $table->string('place');
             $table->string('address');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->date('date');
+            $table->date('subscription_start');
+            $table->date('subscription_end');
             $table->integer('vacancies');
-            $table->float('price');
-            $table->string('note');
-            $table->string('image');
-            $table->string('performed_by');
+            $table->float('price')->nullable();
+            $table->string('note')->nullable();
+            $table->string('image')->nullable();
+            $table->string('performed_by')->nullable();
             $table->integer('workload');
-            $table->string('type');
-            $table->boolean('subscription_status');
+            $table->string('type')->nullable();
+            $table->boolean('subscription_status')->nullable();
             $table->timestamps();
         });
     }
