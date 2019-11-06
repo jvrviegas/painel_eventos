@@ -97,7 +97,7 @@
                 var data = $(this).closest('form').serialize();
                 $.ajax({
                     type: 'POST',
-                    url: "{{url('/subscript/1')}}",
+                    url: "{{url('/subscript/3')}}",
                     data: data,
                     dataType: 'JSON',
                     success: function (results) {
