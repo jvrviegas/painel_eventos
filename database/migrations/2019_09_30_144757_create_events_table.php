@@ -17,20 +17,20 @@ class CreateEventsTable extends Migration
             $table->increments('id');
             $table->string('event_title');
             $table->string('speaker');
-            $table->string('subject');
+            $table->longText('subject');
             $table->string('place');
             $table->string('address');
-            $table->date('date');
+            $table->dateTime('date');
             $table->date('subscription_start');
             $table->date('subscription_end');
             $table->integer('vacancies');
+            $table->integer('restriction'); // Restrição do evento separada por níveis a serem definidos
             $table->float('price')->nullable();
             $table->string('note')->nullable();
             $table->string('image')->nullable();
             $table->string('performed_by')->nullable();
             $table->integer('workload');
             $table->string('type')->nullable();
-            $table->boolean('subscription_status')->nullable();
             $table->timestamps();
         });
     }

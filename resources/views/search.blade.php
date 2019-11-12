@@ -72,7 +72,7 @@
                     success: function (results) {
                         $('body').removeClass("loading");
                         if (results.success === true) {
-                            $("#professional-data").html('<label for="inscricao">Inscrição</label>'+
+                            $("#professional-data").html('<label for="inscricao">Nº de Inscrição COREN</label>'+
                             '<input type="text" class="form-control mb-4" name="inscricao" value="'+results.professional.inscricao+'" readonly>'+
                             '<label for="nome">Nome completo:</label>'+
                             '<input type="text" class="form-control mb-4" name="nome" value="'+results.professional.nome+'" readonly>'+
