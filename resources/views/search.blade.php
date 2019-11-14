@@ -54,6 +54,65 @@
             body.loading .modal {
                 display: block;
             }
+            .switch {
+            position: relative;
+            display: inline-block;
+            width: 45px;
+            height: 24px;
+            }
+
+            .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+            }
+
+            .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            }
+
+            .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            }
+
+            input:checked + .slider {
+            background-color: #2196F3;
+            }
+
+            input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+            }
+
+            input:checked + .slider:before {
+            -webkit-transform: translateX(20px);
+            -ms-transform: translateX(20px);
+            transform: translateX(20px);
+            }
+
+            /* Rounded sliders */
+            .slider.round {
+            border-radius: 24px;
+            }
+
+            .slider.round:before {
+            border-radius: 50%;
+            }
     </style>
     <script>
         jQuery(document).ready(function ($) {
@@ -73,12 +132,19 @@
                         $('body').removeClass("loading");
                         if (results.success === true) {
                             $("#professional-data").html('<label for="inscricao">Nº de Inscrição COREN</label>'+
-                            '<input type="text" class="form-control mb-4" name="inscricao" value="'+results.professional.inscricao+'" readonly>'+
+                            '<input type="text" class="form-control mb-4" name="inscricao" value="'+results.professional.registry+'" readonly>'+
                             '<label for="nome">Nome completo:</label>'+
-                            '<input type="text" class="form-control mb-4" name="nome" value="'+results.professional.nome+'" readonly>'+
+                            '<input type="text" class="form-control mb-4" name="nome" value="'+results.professional.name+'" readonly>'+
                             '<label for="cpf">CPF:</label>'+
                             '<input type="text" class="form-control mb-4" name="cpf" value="'+results.professional.cpf+'" readonly>'+
-                            '<button id="subscript" class="btn btn-info btn-block my-4">Inscrever</button>');
+                            '<p>É coordenador ou responsável técnico?</p><span style="display:inline-block;">Não</span> <label class="switch">'+
+                            '<input id="switch" type="checkbox">'+
+                            '<span class="slider round"></span>'+
+                            '</label><span style="margin-left:5px;">Sim</span>'+
+                            '<p id="unidade-input" style="display:none;"><br><label>Por favor, informe a unidade:</label>'+
+                            '<input id="unidade" type="text" class="form-control mb-4" name="unidade"></p>'+
+                            '<button id="subscript" class="btn btn-info btn-block my-4">Inscrever</button>'
+                            );
                         } else {
                             swal("Opa!", results.message, "warning");
                         }
@@ -92,12 +158,27 @@
                 });
             });
 
+            $(document).on("click", "#switch",function(e){
+                if($('#switch').is(':checked')){
+                    $("#unidade-input").show();
+                }
+                else{
+                    $("#unidade-input").hide();
+                }
+            })
+
             $(document).on("click", "#subscript", function (e) {
                 e.preventDefault();
                 var data = $(this).closest('form').serialize();
+                if($('#switch').is(':checked')){
+                    data += "&coord=1";
+                }
+                else{
+                    data += "&coord=0";
+                }
                 $.ajax({
                     type: 'POST',
-                    url: "{{url('/subscript/3')}}",
+                    url: "{{url('/subscript/4')}}",
                     data: data,
                     dataType: 'JSON',
                     success: function (results) {
@@ -116,7 +197,7 @@
 
 <div class="container">
     <div class="form-group">
-        <form id="search-form" action="" class="border border-light p-5">
+        <form id="search-form" class="border border-light p-5">
             @csrf
             <label class="" for="cpf">Insira seu CPF abaixo:</label>
             <input type="text" value="@if($professional ?? '' != null) {{old('cpf', $professional[0]->cpf)}} @endif" name="cpf" class="cpf form-control mb-4" placeholder="CPF: 123.456.789-00" required>

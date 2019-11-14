@@ -14,6 +14,10 @@ class SearchController extends Controller
         return view('search');
     }
 
+    public function incorp(){
+        return view('incorp');
+    }
+
     public function search(Request $request){
         $professional = null;
         if(!empty($request->cpf)){
@@ -21,7 +25,7 @@ class SearchController extends Controller
                 'cpf' => 'required|cpf',
             ]);
             $cpf = preg_replace("/\D+/", "", $request->input('cpf')); // remove qualquer caractere não numérico
-            $professional = CorenInscrito::where([['cpf', $cpf], ['inscricao', 'LIKE', '%-ENF']])->first();
+            $professional = CorenInscrito::where([['cpf', $cpf], ['registry', 'LIKE', '%-ENF']])->first();
             if(!$professional){
                 return response()->json([
                     'success' => false,
@@ -37,8 +41,10 @@ class SearchController extends Controller
 
     public function subscript(Request $request, $id){
         $event = Event::findOrFail($id);
-        $professional = CorenInscrito::where('inscricao', '=', $request->input('inscricao'))->first();
+        $event_firstday = Event::findOrFail(3);
+        $professional = CorenInscrito::where('registry', '=', $request->input('inscricao'))->first();
         $subscription = $event->subscriptions()->where('professional_id', '=', $professional->id)->first();
+        $subscription_firstday = $event_firstday->subscriptions()->where('professional_id', '=', $professional->id)->first();
         $vagas_preenchidas = $event->subscriptions()->count();
         $remaining_vacancies = $event->vacancies - $vagas_preenchidas;
         $now = date('Y-m-d');
@@ -51,10 +57,19 @@ class SearchController extends Controller
                     'message' => 'Você já realizou sua inscrição!'
                 ]);
             }
+            else if($subscription_firstday){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Você já realizou sua inscrição no primeiro dia!'
+                ]);
+            }
             else if($remaining_vacancies > 0){
                 $event_subscription = new EventSubscription();
                 $event_subscription->event_id = $event->id;
                 $event_subscription->professional_id = $professional->id;
+                if($request->input('coord') == 1){
+                    $event_subscription->observation = "Coordenador/Responsável Técnico do(a) ".$request->input('unidade');
+                }
                 $save = $event_subscription->save();
                 if($save){
                     return response()->json([

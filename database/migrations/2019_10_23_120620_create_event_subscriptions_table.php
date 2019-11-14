@@ -18,6 +18,7 @@ class CreateEventSubscriptionsTable extends Migration
             $table->string('subscripiton_key')->nullable();
             $table->tinyInteger('payment_situation')->nullable();
             $table->tinyInteger('presence')->default(0);
+            $table->string('observation');
 
             $table->integer('event_id')->unsigned();
             $table->foreign('event_id')
