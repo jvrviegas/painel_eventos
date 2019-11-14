@@ -42,7 +42,7 @@ class SearchController extends Controller
     public function subscript(Request $request, $id){
         $event = Event::findOrFail($id);
         $event_firstday = Event::findOrFail(3);
-        $professional = CorenInscrito::where('registry', '=', $request->input('inscricao'))->first();
+        $professional = CorenInscrito::where('inscricao', '=', $request->input('inscricao'))->first();
         $subscription = $event->subscriptions()->where('professional_id', '=', $professional->id)->first();
         $subscription_firstday = $event_firstday->subscriptions()->where('professional_id', '=', $professional->id)->first();
         $vagas_preenchidas = $event->subscriptions()->count();

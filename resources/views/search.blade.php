@@ -132,9 +132,9 @@
                         $('body').removeClass("loading");
                         if (results.success === true) {
                             $("#professional-data").html('<label for="inscricao">Nº de Inscrição COREN</label>'+
-                            '<input type="text" class="form-control mb-4" name="inscricao" value="'+results.professional.registry+'" readonly>'+
+                            '<input type="text" class="form-control mb-4" name="inscricao" value="'+results.professional.inscricao+'" readonly>'+
                             '<label for="nome">Nome completo:</label>'+
-                            '<input type="text" class="form-control mb-4" name="nome" value="'+results.professional.name+'" readonly>'+
+                            '<input type="text" class="form-control mb-4" name="nome" value="'+results.professional.nome+'" readonly>'+
                             '<label for="cpf">CPF:</label>'+
                             '<input type="text" class="form-control mb-4" name="cpf" value="'+results.professional.cpf+'" readonly>'+
                             '<p>É coordenador ou responsável técnico?</p><span style="display:inline-block;">Não</span> <label class="switch">'+
