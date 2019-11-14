@@ -25,7 +25,7 @@ class SearchController extends Controller
                 'cpf' => 'required|cpf',
             ]);
             $cpf = preg_replace("/\D+/", "", $request->input('cpf')); // remove qualquer caractere não numérico
-            $professional = CorenInscrito::where([['cpf', $cpf], ['registry', 'LIKE', '%-ENF']])->first();
+            $professional = CorenInscrito::where([['cpf', $cpf], ['inscricao', 'LIKE', '%-ENF']])->first();
             if(!$professional){
                 return response()->json([
                     'success' => false,
